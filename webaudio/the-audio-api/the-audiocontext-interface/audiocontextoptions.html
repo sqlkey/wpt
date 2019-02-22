@@ -156,6 +156,49 @@
             });
           });
 
+      audit.define(
+          {
+            label: 'test-audiocontextoptions-sampleRate',
+            description:
+                'Test creating contexts with non-default sampleRate values.'
+          },
+          function(task, should) {
+            let closingPromises = [];
+
+            should(
+                function() {
+                  context =
+                      new AudioContext({'sampleRate': 2999})
+                },
+                'context = new AudioContext({\'sampleRate\': ' +
+                    '2999})')
+                .throw(DOMException);
+
+            should(
+                function() {
+                  context =
+                      new AudioContext({'sampleRate': 384001})
+                },
+                'context = new AudioContext({\'sampleRate\': ' +
+                    '384001})')
+                .throw(DOMException);
+
+            should(
+                function() {
+                  context = new AudioContext({'sampleRate': 24000})
+                },
+                'context = new AudioContext({\'latencyHint\': 24000})')
+                .notThrow();
+            should(
+                context.sampleRate, 'sampleRate inrange 1')
+                .beEqualTo(24000);
+            closingPromises.push(context.close());
+
+            Promise.all(closingPromises).then(function() {
+              task.done();
+            });
+          });
+
       audit.run();
     </script>
   </body>
