@@ -143,3 +143,21 @@ let loadChromiumResources = Promise.resolve().then(() => {
 
   return chain;
 });
+
+// both are 4x4 matrices in column-major order
+function multiply_matrices(m1, m2) {
+  function getPos(r, c) {
+    return (c * 4) + r;
+  }
+  let result = new Array(16);
+  for (let row = 0; row < 4; ++row) {
+    for (let col = 0; col < 4; ++col) {
+      let value = 0.0;
+      for (let i = 0; i < 4; ++i) {
+        value += m1[getPos(row, i)] * m2[getPos(i, col)];
+      }
+      result[getPos(row, col)] = value;
+    }
+  }
+  return result;
+}
